@@ -20,6 +20,7 @@ const player_hand_name = [];
 const dealer_hand_values = [];
 const dealer_hand_name = [];
 const prompt =require('prompt-sync')();
+let game = "Running"
 
 function set_the_game(){
     console.log("You have made it to the World Championship BlackJack game.\nThe competition has narrowed down to just you and the dealer.\n Do you have what it takes to bring it all home?")
@@ -34,13 +35,14 @@ function set_the_game(){
 }
 
 function get_action(){
-    const input = prompt('what action would you like to do/nstand/nhit/ndoubledown/nsplit the pair/n', "");
+    const input = prompt('what action would you like to do\nstand\nhit\ndoubledown\nsplit the pair\n', "");
     return input;
 }
 
-function decide_action(stat){
+function decide_action(){
     let index = 2;
     while(game === "Running"){
+        let stat = get_action();
         if (stat === "stand"){
             // do nothing let the dealer go
             check_for_bust();
@@ -60,17 +62,42 @@ function decide_action(stat){
 }
 
 function draw_card(person,person_values, index ){
-    person.push(deck_names[Math.floor(Math.random() * deck_names.length)]);
+    let card = deck_names[Math.floor(Math.random() * deck_names.length)];
+    person.push(card);
     person_values.push(deck_of_cards[person[index]]);
-    // need to check to make sure card hasn't been drawn more then 4 times
+    if(check_cards(person,card)){
+        draw_card(person,person_values,index);
+        console.log("uhh oo that was already in there 4 times")
+    };
+
     // check_for_bust(hand);
 
 }
 
+function check_cards(list, item){
+    let count = 0;
+    for (ele in array){
+        if(ele === item){
+            count++;
+        };
+    };
+    if (count >= 4){
+        return true;
+    }
+}
 function wallet(player, amount, bet){
     // start the player with an amount of money and keep track of all losses
 }
 
 function check_for_bust(hand){
+    let total = hand.reduce(function(x,y){return x + y});
+    if(total > 21){
+        console.log(`Shoot, looks like you busted`);
+        game = "Lost";
+        // wallet(with negative number);
+        // Run dealer cards
+    }
 
 }
+
+console.log(draw_card(player_hand_name, player_hand_values, 2));
