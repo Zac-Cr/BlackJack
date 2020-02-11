@@ -21,6 +21,8 @@ const dealer_hand_values = [];
 const dealer_hand_name = [];
 const prompt =require('prompt-sync')();
 let game = "Running"
+let money = 100;
+let wager = 0
 
 function set_the_game(){
     console.log("You have made it to the World Championship BlackJack game.\nThe competition has narrowed down to just you and the dealer.\n Do you have what it takes to bring it all home?")
@@ -33,7 +35,9 @@ function set_the_game(){
     dealer_hand_values.push(deck_of_cards[dealer_hand_name[0]]);    
     console.log(`The dealer has a ${dealer_hand_name[0]}`);   
 }
-
+funciton get_bet(wage){
+    wager = ("what would you like to bet","");
+}
 function get_action(){
     const input = prompt('what action would you like to do\nstand\nhit\ndoubledown\nsplit the pair\n', "");
     return input;
@@ -67,11 +71,7 @@ function draw_card(person,person_values, index ){
     person_values.push(deck_of_cards[person[index]]);
     if(check_cards(person,card)){
         draw_card(person,person_values,index);
-        console.log("uhh oo that was already in there 4 times")
     };
-
-    // check_for_bust(hand);
-
 }
 
 function check_cards(list, item){
@@ -85,8 +85,14 @@ function check_cards(list, item){
         return true;
     }
 }
-function wallet(player, amount, bet){
-    // start the player with an amount of money and keep track of all losses
+function wallet(amount, bet){
+    if (game === "Won"){
+         money = amount + bet;
+    };
+    if (game ==="Lost"){
+        money = amount - bet;
+    }
+    return money;
 }
 
 function check_for_bust(hand){
@@ -94,10 +100,8 @@ function check_for_bust(hand){
     if(total > 21){
         console.log(`Shoot, looks like you busted`);
         game = "Lost";
-        // wallet(with negative number);
+        wallet();
         // Run dealer cards
     }
 
 }
-
-console.log(draw_card(player_hand_name, player_hand_values, 2));
