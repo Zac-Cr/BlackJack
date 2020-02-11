@@ -23,6 +23,7 @@ const prompt =require('prompt-sync')();
 let game = "Running"
 let money = 100;
 let wager = 0;
+let index = 2;
 
 function set_the_game(){
     console.log("You have made it to the World Championship BlackJack game.\nThe competition has narrowed down to just you and the dealer.\n Do you have what it takes to bring it all home?")
@@ -36,40 +37,57 @@ function set_the_game(){
     console.log(`The dealer has a ${dealer_hand_name[0]}`);   
 }
 function get_bet(){
-    wager = ("what would you like to bet","");
+    wager = prompt(`what would you like to bet\nYou have $${money}\n`,"");
     return wager;
 }
 function get_action(){
-    const input = prompt('what action would you like to do\nstand\nhit\ndoubledown\nsplit the pair\n', "");
+    const input = prompt('what action would you like to do\nstand\nhit\ndoubledown\nsplit the pair\n', " ");
     return input;
 }
 
 function decide_action(){
-    let index = 2;
+    let stat = get_action();
     while(game === "Running"){
-        let stat = get_action();
+        
         if (stat === "stand"){
-            // do nothing let the dealer go
+            dealer_action();
+            decide_game();
         };
         if (stat === "hit"){
             draw_card(player_hand_name, player_hand_values, index)
+            console.log(`you have been dealt a ${player_hand_name[index]}`);
+            console.log(`you now have a ${player_hand_name[0]} a ${player_hand_name[1]} and a ${player_hand_name[2]}`);
+            check_for_bust(player_hand_values);
             index ++
-            check_for_bust();
         };
         if (stat === "double down"){
-            // double the bet value and add another card and stop player from building anymore
-            check_for_bust();
+            draw_card(player_hand_name,player_hand_values,index);
+            wager = wager * 2;
+            check_for_bust(player_hand_values);
+            dealer_action();
+            decide_game();
         };
-    };
-    
+    };    
 }
-
+function decide_game(){
+    let player_hand = player_hand_values.reduce(function(x,y){return x + y});
+    let dealer_hand = dealer_hand_values.reduce(function(x,y){return x + y});
+    if(player_hand > dealer_hand){
+        game = "Won";
+    }
+    else{
+        game = "Loss"
+    };
+}
 function dealer_action(){
-    draw_card(player_hand_name,dealer_hand_values, index);
+    draw_card(dealer_hand_name,dealer_hand_values, index);
     let dealer_total = dealer_hand_values.reduce(function(x,y){return x + y});
-
-    
-
+    if(dealer_total < 10){
+        draw_card(player_hand_name,dealer_hand_values, index);
+        dealer_total = dealer_hand_values.reduce(function(x,y){return x + y});
+        console.log(`The third card for the dealer is ${dealer_hand_name[2]}`)
+    };
+    console.log(`It looks like the second card for the dealer is a ${dealer_hand_name[1]}`)
 }
 function draw_card(person,person_values, index ){
     let card = deck_names[Math.floor(Math.random() * deck_names.length)];
@@ -79,10 +97,9 @@ function draw_card(person,person_values, index ){
         draw_card(person,person_values,index);
     };
 }
-
 function check_cards(list, item){
     let count = 0;
-    for (ele in array){
+    for (ele in list){
         if(ele === item){
             count++;
         };
@@ -93,21 +110,26 @@ function check_cards(list, item){
 }
 function wallet(amount, bet){
     if (game === "Won"){
-         money = amount + bet;
+        money = parseInt(amount) + parseInt(bet);
+        console.log(`You won $${bet}`);
     };
     if (game ==="Lost"){
         money = amount - bet;
+        console.log(`You lost $${bet}`);
     }
+    console.log(`You now have $${money}`)
     return money;
 }
-
 function check_for_bust(hand){
     let total = hand.reduce(function(x,y){return x + y});
     if(total > 21){
         console.log(`Shoot, looks like you busted`);
         game = "Lost";
-        wallet(money, wager);
+        return true
         // Run dealer cards
     }
 
 }
+set_the_game();
+get_bet();
+decide_action();
