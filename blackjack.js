@@ -40,8 +40,12 @@ function set_the_game(){
     console.log(`The dealer has a ${dealer_hand_name[0]}`);   
 }
 function get_bet(){
+    do{
     console.log(`What would you like to bet\nYou have $${money}`);
-    wager = prompt("","");
+    wager = prompt("",);
+    }
+    while(isNaN(wager));
+    
     return wager;
 }
 function get_action(){
@@ -49,7 +53,6 @@ function get_action(){
     const input = prompt("", "");
     return input;
 }
-
 function decide_action(){
     while(game === "Running"){
         let stat = get_action();
